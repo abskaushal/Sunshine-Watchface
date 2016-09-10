@@ -8,8 +8,10 @@ In this project I have built a watchface for Sunshine app.
 
 Complete these steps to update Sunshine to use an API key:
 
-    Obtain an API Key from openweathermap.org
-    Add the line below to your ~/.gradle/gradle.properties file (create the file if it does not exist already): MyOpenWeatherMapApiKey=”YOUR_API_KEY”
-    Follow this guide to add json file for google services plugin
+1) Obtain an API Key from openweathermap.org
+
+2) Add the line below to your ~/.gradle/gradle.properties file (create the file if it does not exist already): MyOpenWeatherMapApiKey=”YOUR_API_KEY”
+
+3) Follow this guide to add json file for google services plugin
 
 
