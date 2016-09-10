@@ -32,15 +32,18 @@ import java.util.concurrent.TimeUnit;
  */
 public class WeatherService extends WearableListenerService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String HIGH_TEMP_KEY = "high_temp";
-    private static final String LOW_TEMP_KEY = "low_temp";
-    private static final String IMAGE_TEMP_KEY = "image_temp";
-    private static final String TIME_STAMP_KEY = "time_stamp";
+    private static final String TAG = WeatherService.class.getSimpleName();
 
-    private static final String START_WEATHER_SYNC_PATH = "/sync_weather";
-    private static final String CURRENT_TEMP_PATH = "/current_temp";
-    private static final String TIME_STAMP_PATH = "/time_stamp";
-    private static final String MESSAGE_INTENT = "message_intent";
+    public static final String HIGH_TEMP_KEY = "high_temp";
+    public static final String LOW_TEMP_KEY = "low_temp";
+    public static final String IMAGE_TEMP_KEY = "image_temp";
+
+    public static final String START_WEATHER_SYNC_PATH = "/sync_weather";
+    public static final String CURRENT_TEMP_PATH = "/current_temp";
+    public static final String TIME_STAMP_PATH = "/time_stamp";
+    public static final String MESSAGE_INTENT = "message_intent";
+
+    public static final String IMAGE_NAME = "image.png";
 
     private String mHighTemp;
     private String mLowTemp;
@@ -52,6 +55,7 @@ public class WeatherService extends WearableListenerService implements GoogleApi
     public void onCreate() {
         super.onCreate();
 
+        Log.v(TAG, "OnCreate");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
@@ -66,6 +70,7 @@ public class WeatherService extends WearableListenerService implements GoogleApi
             return;
         }
 
+        Log.v(TAG, "On Data: "+dataEventBuffer);
         connectGoogleApiClient();
         for(DataEvent event : dataEventBuffer){
             String path = event.getDataItem().getUri().getPath();
@@ -78,6 +83,7 @@ public class WeatherService extends WearableListenerService implements GoogleApi
                 DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                 mHighTemp = dataMap.getString(HIGH_TEMP_KEY);
                 mLowTemp = dataMap.getString(LOW_TEMP_KEY);
+                new LoadBitmapAsyncTask().execute(dataMap.getAsset(IMAGE_TEMP_KEY));
             }
         }
     }
@@ -114,16 +120,21 @@ public class WeatherService extends WearableListenerService implements GoogleApi
 
         try {
         if(mBitmap!=null){
-            String filename = "image.png";
 
-            FileOutputStream outputStream = openFileOutput(filename,MODE_PRIVATE);
+            FileOutputStream outputStream = openFileOutput(IMAGE_NAME,MODE_PRIVATE);
             mBitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
             outputStream.close();
 
-            intent.putExtra(IMAGE_TEMP_KEY,mBitmap);
+            intent.putExtra(IMAGE_TEMP_KEY,IMAGE_NAME);
 
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
+        }else{
+            if(sourceNodeId != null) {
+                // Send the rpc saying that we have null bitmap here!! Alert
+                Wearable.MessageApi.sendMessage(mGoogleApiClient, sourceNodeId, "/itsnull",
+                        new byte[0]);
+            }
         }
 
         } catch (java.io.IOException e) {
