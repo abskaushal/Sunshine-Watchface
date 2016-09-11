@@ -20,3 +20,12 @@ Complete these steps to update Sunshine to use an API key:
 3) Follow this guide to add json file for google services plugin
 
 
+
+## Screens
+
+![movies grid](../master/screenshot/watchface_circle.png)
+
+
+![movie detail](../master/screenshot/watchface_square.png)
+
+
