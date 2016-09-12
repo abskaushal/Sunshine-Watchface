@@ -17,7 +17,7 @@ Complete these steps to update Sunshine to use an API key:
 
 2) Add the line below to your ~/.gradle/gradle.properties file (create the file if it does not exist already): MyOpenWeatherMapApiKey=”YOUR_API_KEY”
 
-3) Follow this guide to add json file for google services plugin
+3) Follow this [guide](https://developers.google.com/android/guides/google-services-plugin) to add json file for google services plugin
 
 
 
